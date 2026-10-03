@@ -14,6 +14,10 @@ let entregas = [
 let proximoId = 3;
 
 export class UsuariosService{
+        constructor(reposiroty){
+                this.reposiroty = reposiroty;
+        }
+
         async cadastrarEntrega( descricao, origem, destino){
                 if (origem === destino) {
                         throw new AppError('Precisa da origem e destino', 400);
@@ -33,27 +37,29 @@ export class UsuariosService{
                                 descricao: "Entrega Cadastrada",
                         }
                 }
-                entregas.push(novaEntrega);
-                return novaEntrega;
+                return this.reposiroty.cadastrarEntrega(novaEntrega);
         }
 
         async listarTodos(){
-                return entregas;
+                return this.reposiroty.listarTodos();
         }
 
         async listarEntregasTransito(){
-                const entregasEmTransito = entregas.filter((entrega) => entrega.status === StatusEntrega.EM_TRANSITO);
+                const lista = await this.reposiroty.listarTodos();
+                const entregasEmTransito = lista.filter((entrega) => entrega.status === StatusEntrega.EM_TRANSITO);
                 return entregasEmTransito;
         }
 
         async listarEntregaPorId(id){
-                const buscar = entregas.find((entrega) => entrega.id == id);
+
+                const lista = await this.listarTodos();
+                const buscar = lista.find((entrega) => entrega.id == id);
                 if (!buscar) { throw new AppError('Nao encontrado', 404); }
                 return buscar;
 
         }
         async avancarEntrega(id){
-                buscar = this.listarEntregaPorId(id); 
+               const buscar = await this.listarEntregaPorId(id); 
                 if (buscar.status === StatusEntrega.ENTREGUE || buscar.status === StatusEntrega.CANCELADA){ 
                         throw new AppError('já ENTREGUE/CANCELADA', 422)
                 }
