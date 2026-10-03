@@ -1,59 +1,42 @@
 import { AppError } from "../utils/appError.utils.js";
 
-const StatusEntrega = Object.freeze({
+export const StatusEntrega = Object.freeze({
   CRIADA: 'CRIADA',
   EM_TRANSITO: 'EM_TRANSITO',
   ENTREGUE: 'ENTREGUE',
   CANCELADA: 'CANCELADA'
 });
 
-let entregas = [ 
-        {id: 1, descricao: "teste", origem: "teste", destino: "teste", status: StatusEntrega.CRIADA, motoristaID: 1, historico: {data: '10/11/2026', descricao: "teste"}},
-        {id: 2, descricao: "teste", origem: "teste", destino: "teste", status: StatusEntrega.CANCELADA, motoristaID: 2, historico: {data: '10/11/2026', descricao: "teste"}},
-,];
-let proximoId = 3;
-
-export class UsuariosService{
-        constructor(reposiroty){
-                this.reposiroty = reposiroty;
+export class EntregasService{
+        constructor(repository){
+                this.repository = repository;
         }
 
         async cadastrarEntrega( descricao, origem, destino){
                 if (origem === destino) {
                         throw new AppError('Precisa da origem e destino', 400);
                 }
-                const repetido = entregas.some((e) => e.descricao === descricao && 
+                const entrega = await this.repository.listarEntregas();
+                const repetido = entrega.some((e) => e.descricao === descricao && 
                                                       e.origem === origem &&
                                                       e.destino === destino);
                 if (repetido) { throw new AppError('Duplicata com cadastro existente', 409); }
-
-                const novaEntrega = { 
-                        id: proximoId++, 
-                        descricao: descricao, 
-                        origem: origem, 
-                        status: StatusEntrega.CRIADA, 
-                        historico: {
-                                data: new Date().toISOString(),
-                                descricao: "Entrega Cadastrada",
-                        }
-                }
-                return this.reposiroty.cadastrarEntrega(novaEntrega);
+      
+                return this.repository.cadastrarEntrega(descricao, origem, destino);
         }
 
-        async listarTodos(){
-                return this.reposiroty.listarTodos();
+        async listarEntregas(){
+                return this.repository.listarEntregas();
         }
 
         async listarEntregasTransito(){
-                const lista = await this.reposiroty.listarTodos();
-                const entregasEmTransito = lista.filter((entrega) => entrega.status === StatusEntrega.EM_TRANSITO);
+                const entregasEmTransito = await this.repository.listarEntregasTransito();
                 return entregasEmTransito;
         }
 
         async listarEntregaPorId(id){
 
-                const lista = await this.listarTodos();
-                const buscar = lista.find((entrega) => entrega.id == id);
+                const buscar = await this.repository.listarEntregaPorId();
                 if (!buscar) { throw new AppError('Nao encontrado', 404); }
                 return buscar;
 
@@ -61,27 +44,21 @@ export class UsuariosService{
         async avancarEntrega(id){
                const buscar = await this.listarEntregaPorId(id); 
                 if (buscar.status === StatusEntrega.ENTREGUE || buscar.status === StatusEntrega.CANCELADA){ 
-                        throw new AppError('já ENTREGUE/CANCELADA', 422)
+                        throw new AppError('já ENTREGUE/CANCELADA', 422);
                 }
-                if (buscar.status === StatusEntrega.CRIADA){ 
-                        entregas[id].status = StatusEntrega.EM_TRANSITO;
-                }
-                if (buscar.status === StatusEntrega.EM_TRANSITO){
-                        entregas[id].status = StatusEntrega.ENTREGUE;
-                }
-                return entrega[id].buscar;
+                return this.repository.avancarEntrega(id);
         }
 
         async cancelarEntrega(id){
-                buscar = this.listarEntregaPorId(id);
+                const buscar = await this.listarEntregaPorId(id);
                 if (buscar.status === StatusEntrega.ENTREGUE || buscar.status === StatusEntrega.CANCELADA){
                         throw new AppError('não permitido', 422);
                 }
-                entregas.splice(id, 1);
+                return this.repository.cancelarEntrega(id);
         }
         
         async historicoEntrega(id){
-                buscar = this.listarEntregaPorId(id);
-                return buscar.historico;
+                buscar = await this.listarEntregaPorId(id);
+                return this.repository.buscarEntregaHistorico(id);
         }
 }

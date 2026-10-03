@@ -4,7 +4,6 @@ import express from 'express';
 // import morgan from 'morgan';
 
 import { router } from './routes/index.js';
-import { middlewareDeErros } from './utils/errorHandler.utils.js';
 
 const app = express();
 
@@ -17,7 +16,5 @@ app.use(express.json());
 // Rotas
 app.use('/api', router);
 
-// Middleware de erros (sempre por último)
-app.use(middlewareDeErros);
 
 export default app;
