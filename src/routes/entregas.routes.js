@@ -4,9 +4,9 @@ import * as entregasController from '../controllers/entregas.controller.js'
 export const entregasRouter = Router();
 
 entregasRouter.post('/', entregasController.cadastrarEntrega);
-entregasRouter.get('/', entregasController.listarEntregas);
+entregasRouter.get('/', entregasController.listarEntregasTransito);
 entregasRouter.get('/:id', entregasController.listarEntregaPorId);
-entregasRouter.get('/:id/avancar', entregasController.atualizarEntrega);
+entregasRouter.get('/:id/avancar', entregasController.avancarEntrega);
 entregasRouter.patch('/:id/cancelar',entregasController.cancelarEntrega);
 entregasRouter.patch('/:id/historico',entregasController.historicoEntrega);
 

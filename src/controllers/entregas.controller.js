@@ -1,23 +1,79 @@
+// TODO: cadastrar erros pelo middleware e try/catch
+
 export const cadastrarEntrega = async (req, res, next) => {
-// return res.status(400).json({ erro: 'E-mail inválido' })
+
+        const { descricao, origem, destino } = req.body;
+
+        if (!origem || !destino){
+                return res.status(400).json({ erro: "Precisa da origem e destino"});
+        } 
+
+        service.cadastrarEntrega( descricao, origem, destino);
+
+        res.status(201)
 }
 
-export const listarEntregas = async (req, res, next)=>{
-// return res.status(400).json({ erro: 'E-mail inválido' })
+export const listarEntregas = async (req, res, next) => {
+
+        const lista = service.listarEntregas();
+
+        res.json(lista)
+        res.status(200)
 }
+
+export const listarEntregasTransito = async (req, res, next)=>{
+
+        const lista = service.listarEntregasTransito();
+
+        res.json(lista);
+        res.status(200)
+}
+
 
 export const listarEntregaPorId = async (req, res, next)=>{
-// return res.status(400).json({ erro: 'E-mail inválido' })
+
+        const { id } = req.params;
+
+        const entrega = service.listarEntregaPorId(id);
+
+        if (!entrega) { return status(404).json({erro: 'Entrega não encontrada'})}
+
+        res.json(entrega)
+        res.status(200)
 }
 
-export const atualizarEntrega = async (req, res, next)=>{
-// return res.status(400).json({ erro: 'E-mail inválido' })
+export const avancarEntrega = async (req, res, next)=>{
+
+        const dados = req.body
+        const { id } = req.params;
+
+        const ok = service.avancarEntrega(id);
+
+        if (!ok) {return res.status(404)}
+        if (ok == 0) {return res.status(422)}
+        res.status(200)
+
 }
 
 export const cancelarEntrega= async (req, res, next)=>{
-// return res.status(400).json({ erro: 'E-mail inválido' })
+        const { id } = req.params;
+
+        const ok = service.cancelarEntrega(id);
+
+        if (!ok) { return res.status(404)}
+        if (ok == 0) {return res.status(422)}
+        res.status(200)
 }
 
 export const historicoEntrega = async (req, res, next)=>{
-// return res.status(400).json({ erro: 'E-mail inválido' })
+
+        const { id } = req.params;
+        
+        const historico = service.historicoEntrega(id);
+
+        if (!historico) {return res.status(404)}
+        res.json(historico)
+        res.status(200)
 }
+
+
