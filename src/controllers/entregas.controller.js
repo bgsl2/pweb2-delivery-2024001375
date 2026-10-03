@@ -1,4 +1,7 @@
 // TODO: cadastrar erros pelo middleware e try/catch
+import { UsuariosService } from "../services/entregas.service.js";
+
+const service = new UsuariosService();
 
 export const cadastrarEntrega = async (req, res, next) => {
 

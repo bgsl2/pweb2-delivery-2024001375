@@ -1,6 +1,10 @@
-export default function errorHandler (err, req, res, next) {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({
-    erro: err.message || 'Erro interno do servidor',
-  });
-}
+import { AppError } from './appError.utils.js';
+
+export const middlewareDeErros = (err, req, res, next) => {
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({ erro: err.message });
+  }
+
+  console.error(err);
+  res.status(500).json({ erro: 'Erro interno do servidor' });
+};
