@@ -61,4 +61,14 @@ export class EntregasService{
                 const buscar = await this.listarEntregaPorId(id);
                 return this.repository.buscarEntregaHistorico(id);
         }
+
+        async atribuirEntrega(id, motoristaId){
+                const motorista = await this.motoristaRepository.buscarPorId(motoristaId);
+                if (motoristaId.status === 'INATIVO') {throw new AppError('Motorista inativo', 422);}
+
+                const entrega = await this.repository.listarEntregaPorId(id);
+                if (!entrega){ throw new appError('entrega não criada', 422);}
+
+                return await this.repository.atribuirEntrega(id, motoristaId);
+        }
 }

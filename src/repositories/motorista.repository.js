@@ -2,9 +2,9 @@ export class MotoristaRepository{
         constructor(){
                 let motoristas = [
                         {id: 1, nome: 'Jose', cpf:'1234567', placaveiculo: '123a34', status: 'ATIVO'},
-                        {id: 1, nome: 'Jose', cpf:'1234567', placaveiculo: '123a34', status: 'ATIVO'},
+                        {id: 2, nome: 'Josi', cpf:'1334567', placaveiculo: '122a34', status: 'ATIVO'},
                 ];
-                let proximoId = 2;
+                let proximoId = 3;
         }
 
         async listarTodos(filtro){
@@ -14,6 +14,7 @@ export class MotoristaRepository{
                 }
                 return this.motoristas;
         }
+
         async buscarPorId(id){
                 return this.motoristas.find(m => m.id === Number(id));
         }
@@ -30,6 +31,5 @@ export class MotoristaRepository{
                 };
                 this.motoristas.push(novoMotorista);
                 return novoMotorista;
-                
         }
 }

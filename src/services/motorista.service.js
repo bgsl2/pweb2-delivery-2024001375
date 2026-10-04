@@ -15,7 +15,30 @@ export class MotoristaService{
                        next(err); 
                 }
         }
+        async buscarPorId(motoristaId){
+                try{
+                        const buscarporId = await this.motoristaRepository.buscarPorId(motoristaId);
+                        return buscarPorId;
+                } catch(err) {
+                        next(err);
+                }
+        }
+        async buscarPorEntrega(motoristaId, entrega){
+                try {
+                        const motorista = await this.entregaRepository.buscarEntregaMotorista(motoristaId);
+                        return motorista;
+                } catch (err) {
+                       next(err); 
+                }
+        }
+        async buscarEntregaMotoristaFiltrado(motoristaId, entregaRepository){
+                try {
+                        const motorista = this.entregaRepository.buscarEntregaMotoristaFiltrado(motoristaId, entregaRepository);
+                        
+                } catch (err) {
+                       next(err); 
+                }
+        }
 
-        
 
 }

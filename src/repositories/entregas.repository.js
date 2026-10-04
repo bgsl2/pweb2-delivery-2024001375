@@ -73,4 +73,18 @@ export class EntregasRepository {
                 const busca = this.entregas.find((entrega) => entrega.id === Number(id))
                 return busca.historico;
         }
+        async buscarEntregaMotorista(motoristaId){
+                const busca = this.entregas.find((entrega) => entrega.motoristaId === Number(motoristaId));
+                return busca;
+        }
+        async buscarEntregaMotoristaFiltrado(motoristaId, status){
+                const busca = this.entregas.find((entrega) => entrega.motoristaId === Number(motoristaId));
+                return busca.filter((entrega) => entrega.status === status);
+        }
+
+        async atribuirEntrega(id, motoristaId){
+                const entrega = this.entregas.find(e => e.id === Number(id));
+                entrega.motoristaId = motoristaId;
+                return entrega;
+        }
 }
