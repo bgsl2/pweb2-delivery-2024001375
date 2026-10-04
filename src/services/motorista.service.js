@@ -6,39 +6,23 @@ export class MotoristaService{
                 this.motoristaRepository = motoristaRepository;
         }
         async cadastrarMotorista(nome, cpf, placa){
-                try {
-                        const buscarPorCpf = await this.motoristaRepository.buscarPorCpf(cpf)
-                        if (buscarPorCpf) { throw new appError('cpf duplicado', 409); }
-                        
-                        return this.motoristaRepository.criar(nome, cpf, placa);
-                } catch (err) {
-                       next(err); 
-                }
+                const buscarPorCpf = await this.motoristaRepository.buscarPorCpf(cpf)
+                if (buscarPorCpf) { throw new AppError('cpf duplicado', 409); }
+                return this.motoristaRepository.criar(nome, cpf, placa);
+        }
+        async listarTodos(){
+                return await this.motoristaRepository.listarTodos();
         }
         async buscarPorId(motoristaId){
-                try{
-                        const buscarporId = await this.motoristaRepository.buscarPorId(motoristaId);
-                        return buscarPorId;
-                } catch(err) {
-                        next(err);
-                }
+                const buscarporId = await this.motoristaRepository.buscarPorId(motoristaId);
+                return buscarPorId;
         }
-        async buscarPorEntrega(motoristaId, entrega){
-                try {
-                        const motorista = await this.entregaRepository.buscarEntregaMotorista(motoristaId);
-                        return motorista;
-                } catch (err) {
-                       next(err); 
-                }
+        async buscarPorEntrega(motoristaId){
+                const motorista = await this.entregaRepository.buscarEntregaMotorista(motoristaId);
+                return motorista;
         }
-        async buscarEntregaMotoristaFiltrado(motoristaId, entregaRepository){
-                try {
-                        const motorista = this.entregaRepository.buscarEntregaMotoristaFiltrado(motoristaId, entregaRepository);
-                        
-                } catch (err) {
-                       next(err); 
-                }
-        }
-
-
+        async buscarEntregaMotoristaFiltrado(motoristaId, status){
+                const motorista = this.entregaRepository.buscarEntregaMotoristaFiltrado(motoristaId, status);
+                return motorista;
+}
 }

@@ -8,8 +8,9 @@ import { AppError } from "../utils/appError.utils.js";
 // });
 
 export class EntregasService{
-        constructor(repository){
-                this.repository = repository;
+        constructor(repositoryEntrega, repositoryMotorista){
+                this.repository = repositoryEntrega;
+                this.repositoryMotorista = repositoryMotorista;
         }
 
         async cadastrarEntrega( descricao, origem, destino){
@@ -63,11 +64,13 @@ export class EntregasService{
         }
 
         async atribuirEntrega(id, motoristaId){
-                const motorista = await this.motoristaRepository.buscarPorId(motoristaId);
+                const motorista = await this.repositoryMotorista.buscarPorId(motoristaId);
+                if (!motorista) { throw new AppError('Motorista não econtrado', 404)}
+
                 if (motoristaId.status === 'INATIVO') {throw new AppError('Motorista inativo', 422);}
 
                 const entrega = await this.repository.listarEntregaPorId(id);
-                if (!entrega){ throw new appError('entrega não criada', 422);}
+                if (!entrega || entrega.status === 'EM_TRANSITO'){ throw new AppError('atribuicao invalida', 422);}
 
                 return await this.repository.atribuirEntrega(id, motoristaId);
         }

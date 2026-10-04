@@ -10,6 +10,7 @@ export class EntregasController{
                 this.avancarEntrega = this.avancarEntrega.bind(this);
                 this.cancelarEntrega = this.cancelarEntrega.bind(this);
                 this.historicoEntrega = this.historicoEntrega.bind(this);
+                this.atribuirEntrega = this.atribuirEntrega.bind(this);
         }
 
 
@@ -95,4 +96,17 @@ try {
                 next(err);
         }
 }
+async atribuirEntrega( req, res, next){
+        try{
+        const { motoristaId } = req.body;
+        const { id } = req.params;
+
+        const atribuir = await this.service.atribuirEntrega(id, motoristaId);
+
+        return res.status(200).json(atribuir)
+
+        } catch (err){
+                next(err);
+                }
+        }
 }
