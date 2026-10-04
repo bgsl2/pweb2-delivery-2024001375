@@ -1,11 +1,11 @@
 import { AppError } from "../utils/appError.utils.js";
-
-export const StatusEntrega = Object.freeze({
-  CRIADA: 'CRIADA',
-  EM_TRANSITO: 'EM_TRANSITO',
-  ENTREGUE: 'ENTREGUE',
-  CANCELADA: 'CANCELADA'
-});
+//
+// export const StatusEntrega = Object.freeze({
+//   CRIADA: 'CRIADA',
+//   EM_TRANSITO: 'EM_TRANSITO',
+//   ENTREGUE: 'ENTREGUE',
+//   CANCELADA: 'CANCELADA'
+// });
 
 export class EntregasService{
         constructor(repository){
@@ -29,36 +29,36 @@ export class EntregasService{
                 return this.repository.listarEntregas();
         }
 
-        async listarEntregasTransito(){
-                const entregasEmTransito = await this.repository.listarEntregasTransito();
-                return entregasEmTransito;
+        async listarEntregasFiltrada(filtro){
+                const entregasFiltrada = await this.repository.listarEntregasFiltrada(filtro);
+                return entregasFiltrada;
         }
 
         async listarEntregaPorId(id){
 
-                const buscar = await this.repository.listarEntregaPorId();
+                const buscar = await this.repository.listarEntregaPorId(id);
                 if (!buscar) { throw new AppError('Nao encontrado', 404); }
                 return buscar;
 
         }
         async avancarEntrega(id){
                const buscar = await this.listarEntregaPorId(id); 
-                if (buscar.status === StatusEntrega.ENTREGUE || buscar.status === StatusEntrega.CANCELADA){ 
+                if (buscar.status === 'ENTREGUE' || buscar.status === 'CANCELADA'){ 
                         throw new AppError('já ENTREGUE/CANCELADA', 422);
                 }
-                return this.repository.avancarEntrega(id);
+                return await this.repository.avancarEntrega(id);
         }
 
         async cancelarEntrega(id){
                 const buscar = await this.listarEntregaPorId(id);
-                if (buscar.status === StatusEntrega.ENTREGUE || buscar.status === StatusEntrega.CANCELADA){
+                if (buscar.status === "ENTREGUE" || buscar.status === "CANCELADA"){
                         throw new AppError('não permitido', 422);
                 }
                 return this.repository.cancelarEntrega(id);
         }
         
         async historicoEntrega(id){
-                buscar = await this.listarEntregaPorId(id);
+                const buscar = await this.listarEntregaPorId(id);
                 return this.repository.buscarEntregaHistorico(id);
         }
 }

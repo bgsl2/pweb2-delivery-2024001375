@@ -1,10 +1,10 @@
-import { StatusEntrega } from "../services/entregas.service.js";
+// import { StatusEntrega } from "../services/entregas.service.js";
 
 export class EntregasRepository {
         constructor() {
         this.entregas = [
-        {id: 1, descricao: "teste", origem: "teste", destino: "teste", status: StatusEntrega.CRIADA, motoristaId: 1, historico: {data: '10/11/2026', descricao: "teste"}},
-        {id: 2, descricao: "teste", origem: "teste", destino: "teste", status: StatusEntrega.CANCELADA, motoristaId: 2, historico: {data: '10/11/2026', descricao: "teste"}},
+        {id: 1, descricao: "teste", origem: "teste", destino: "teste", status:'CRIADA', motoristaId: null, historico: [{data: new Date().toISOString(), descricao: "teste"}]},
+        {id: 2, descricao: "teste", origem: "teste", destino: "teste", status:'CRIADA', motoristaId: null, historico: [{data: new Date().toISOString(), descricao: "teste"}]},
         ];
         this.proximoId = 3;
         }
@@ -19,33 +19,50 @@ export class EntregasRepository {
                         descricao: descricao, 
                         origem: origem, 
                         destino: destino,
-                        status: StatusEntrega.CRIADA, 
-                        historico: {
+                        status: 'CRIADA', 
+                        motoristaId: null,
+                        historico: [{
                                 data: new Date().toISOString(),
                                 descricao: "Entrega Cadastrada",
-                        }
+                        }]
                 }
                 this.entregas.push(novaEntrega);
                 return novaEntrega;
         }
 
-        async listarEntregasTransito(){
-                const entregasEmTransito = this.entregas.filter((entrega) => entrega.status === StatusEntrega.EM_TRANSITO);
-                return entregasEmTransito;
+        async listarEntregasFiltrada(filtro){
+                const entregasFiltrada = this.entregas.filter((entrega) => entrega.status === filtro);
+                return entregasFiltrada;
         }
 
         async listarEntregaPorId(id){
-                const entrega = this.entregas.find((entrega) => entrega.id == id) ?? null;
+                const entrega = this.entregas.find((entrega) => entrega.id === Number(id)) ?? null;
                 return entrega;
         }
 
         async avancarEntrega(id){
-                if (this.entregas[id].status === StatusEntrega.CRIADA){ 
-                        this.entregas[id].status = StatusEntrega.EM_TRANSITO;
-                }else {
-                        this.entregas[id].status = StatusEntrega.ENTREGUE;
+                const entrega = this.entregas.find(e => e.id === Number(id));
+                if (entrega.status === 'CRIADA'){ 
+                        entrega.status = 'EM_TRANSITO';
+                        entrega.historico.push(
+                                {
+                                data: new Date().toISOString(),
+                                descricao: "EM_TRANSITO",
+                                }
+                        )
+                        return entrega;
+                } 
+                if (entrega.status === 'EM_TRANSITO'){
+                        entrega.status = 'ENTREGUE';
+                                entrega.historico.push(
+                                {
+                                data: new Date().toISOString(),
+                                descricao: "ENTREGUE",
+                                }
+                        )
+                        return entrega;
                 }
-                return this.entregas[id].status
+                return entrega;
         }
 
         async cancelarEntrega(id){
@@ -53,6 +70,7 @@ export class EntregasRepository {
         }
 
         async buscarEntregaHistorico(id){
-                return this.entregas[id].historico;
+                const busca = this.entregas.find((entrega) => entrega.id === Number(id))
+                return busca.historico;
         }
 }

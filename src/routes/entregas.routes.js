@@ -12,8 +12,8 @@ export const entregasRouter = Router();
 entregasRouter.post('/', controller.cadastrarEntrega);
 entregasRouter.get('/', controller.listarEntregas);
 entregasRouter.get('/:id',controller.listarEntregaPorId);
-entregasRouter.get('/:id/avancar', controller.avancarEntrega);
+entregasRouter.patch('/:id/avancar', controller.avancarEntrega);
 entregasRouter.patch('/:id/cancelar',controller.cancelarEntrega);
-entregasRouter.patch('/:id/historico',controller.historicoEntrega);
+entregasRouter.get('/:id/historico',controller.historicoEntrega);
 
 export default entregasRouter;

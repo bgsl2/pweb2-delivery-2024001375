@@ -9,6 +9,7 @@ export class EntregasController{
                 this.listarEntregaPorId = this.listarEntregaPorId.bind(this);
                 this.avancarEntrega = this.avancarEntrega.bind(this);
                 this.cancelarEntrega = this.cancelarEntrega.bind(this);
+                this.historicoEntrega = this.historicoEntrega.bind(this);
         }
 
 
@@ -29,7 +30,7 @@ try{
         const { status } = req.query;
         let lista; 
         if (status) { 
-                        lista = await this.service.listarEntregasTransito();
+                        lista = await this.service.listarEntregasFiltrada(status);
                 } else{
                         lista = await this.service.listarEntregas();
                 }
