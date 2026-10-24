@@ -26,7 +26,7 @@ model Entregas {
                 @@map("Entregas")
         }
 model Historico { 
-                id        int      @id @default(autoincrement())
+                id        Int      @id @default(autoincrement())
                 data      DateTime @default(now())
                 descricao String
 
