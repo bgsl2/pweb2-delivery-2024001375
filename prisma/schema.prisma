@@ -1,9 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,36 +8,39 @@ datasource db {
 }
 
 model Entregas {
-                id        Int    @id @default(autoincrement())
-                descricao String 
-                origem    String
-                destino   String
-                status    String @default("CRIADO")
+  id          Int         @id @default(autoincrement())
+  descricao   String
+  origem      String
+  destino     String
+  status      String      @default("CRIADA") 
 
-                motorista   Motorista? @relation(fields: [motoristaId], references: [id])
-                motoristaId Int?       @map("motorista_id")
+  motorista   Motorista?  @relation(fields: [motoristaId], references: [id])
+  motoristaId Int?        @map("motorista_id")
 
-                historico   Historico[]
+  historico   Historico[]
 
-                @@map("Entregas")
-        }
-model Historico { 
-                id        Int      @id @default(autoincrement())
-                data      DateTime @default(now())
-                descricao String
+  @@map("Entregas")
+}
 
-                entrega   Entregas @relation(fields: [entregaId], references: [id], onDelete: Cascade)
-                entregaId Int      @map("entrega_id")
+model Historico {
+  id        Int      @id @default(autoincrement())
+  data      DateTime @default(now())
+  descricao String
 
-                @@map("Historico")
-        }
+  entrega   Entregas @relation(fields: [entregaId], references: [id], onDelete: Cascade)
+  entregaId Int      @map("entrega_id")
+
+  @@map("Historico")
+}
+
 model Motorista {
-        id           Int @id @default(autoincrement())
-        nome         String
-        cpf          String @unique
-        placaVeiculo String @map("placa_veiculo")
-        status       String @default("ATIVO")
+  id           Int        @id @default(autoincrement())
+  nome         String
+  cpf          String     @unique
+  placaveiculo String     @map("placa_veiculo") 
+  status       String     @default("ATIVO")
 
-        entregas Entregas[]
-        @@map("Motorista")
-        }
+  entregas     Entregas[]
+
+  @@map("Motorista")
+}

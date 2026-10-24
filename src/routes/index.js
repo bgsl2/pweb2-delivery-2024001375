@@ -1,12 +1,12 @@
 import { Router } from "express";
 
 import { criarEntregasRouter } from "./entregas.routes.js"
-import { EntregasRepositoryPrisma} from '../repositories/entregas.repository.js'
+import { EntregasRepositoryPrisma} from '../repositories/entregas.repository.prisma.js'
 import { EntregasService} from '../services/entregas.service.js'
 import { EntregasController } from '../controllers/entregas.controller.js'
 
 import { criarMotoristaRouter } from "./motorista.routes.js"
-import { MotoristaRepositoryPrisma} from '../repositories/motorista.repository.js'
+import { MotoristaRepositoryPrisma} from '../repositories/motorista.repository.prisma.js'
 import { MotoristaService} from '../services/motorista.service.js'
 import { MotoristaController } from '../controllers/motorista.controller.js'
 

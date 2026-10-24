@@ -6,7 +6,7 @@ export class EntregasRepositoryPrisma{
         }
 
         async cadastrarEntrega(descricao, origem, destino){
-                const novaEntrega = await prisma.Entregas.create{ 
+                const novaEntrega = await prisma.Entregas.create({ 
                         data: {
                                 descricao: descricao, 
                                 origem: origem, 
@@ -17,7 +17,8 @@ export class EntregasRepositoryPrisma{
                                                 descricao: "Entrega Cadastrada",
                                         }
                                 }
-                }}
+                        }
+                })
                 return novaEntrega;
         }
         async listarEntregasFiltrada(filtro){
