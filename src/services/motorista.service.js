@@ -15,7 +15,7 @@ export class MotoristaService{
         }
         async buscarPorId(motoristaId){
                 const buscarporId = await this.motoristaRepository.buscarPorId(motoristaId);
-                return buscarPorId;
+                return buscarporId;
         }
         async buscarPorEntrega(motoristaId){
                 const motorista = await this.entregaRepository.buscarEntregaMotorista(motoristaId);
