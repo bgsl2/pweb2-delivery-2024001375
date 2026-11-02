@@ -20,7 +20,17 @@ export class EntregasController {
 
                         const novaEntrega = await this.service.cadastrarEntrega(descricao, origem, destino);
 
-                        return res.status(201).json(novaEntrega);
+                        return res.status(201).redirect('/api/entregas');
+                        // return res.status(201).json(novaEntrega);
+                } catch (err) {
+                        next(err);
+                }
+        }
+
+        async formularioCadastro(req, res, next) {
+                try {
+                        return res.status(200).render('entregas/cadastrarEntrega')
+
                 } catch (err) {
                         next(err);
                 }

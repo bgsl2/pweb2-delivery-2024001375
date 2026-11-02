@@ -5,7 +5,7 @@
     <main class="container">
       <div class="page-header">
         <h1>Entregas</h1>
-        <a href="/entregas/new" class="btn btn-primary">Nova Entrega</a>
+        <a href="entregas/nova" class="btn btn-primary">Nova Entrega</a>
       </div>
 
       <% if (entregas.length===0) { %>
@@ -24,7 +24,7 @@
               </tr>
             </thead>
             <tbody>
-              <% entregas.forEach(e=> { %>
+              <% entregas.reverse().forEach(e=> { %>
                 <tr>
                   <td>
                     <%= e.id %>

@@ -6,16 +6,17 @@ import { Router } from "express";
 // const repository = new EntregasRepository();
 // const service = new EntregasService(repository);
 // const controller = new EntregasController(service);
-export function criarEntregasRouter(controller){
-const entregasRouter = Router();
+export function criarEntregasRouter(controller) {
+        const entregasRouter = Router();
 
-entregasRouter.post('/', controller.cadastrarEntrega);
-entregasRouter.get('/', controller.listarEntregas);
-entregasRouter.get('/:id',controller.listarEntregaPorId);
-entregasRouter.patch('/:id/avancar', controller.avancarEntrega);
-entregasRouter.patch('/:id/cancelar',controller.cancelarEntrega);
-entregasRouter.patch('/:id/atribuir',controller.atribuirEntrega)
-entregasRouter.get('/:id/historico',controller.historicoEntrega);
+        entregasRouter.post('/', controller.cadastrarEntrega);
+        entregasRouter.get('/', controller.listarEntregas);
+        entregasRouter.get('/nova', controller.formularioCadastro)
+        entregasRouter.get('/:id', controller.listarEntregaPorId);
+        entregasRouter.patch('/:id/avancar', controller.avancarEntrega);
+        entregasRouter.patch('/:id/cancelar', controller.cancelarEntrega);
+        entregasRouter.patch('/:id/atribuir', controller.atribuirEntrega)
+        entregasRouter.get('/:id/historico', controller.historicoEntrega);
 
-return entregasRouter;
+        return entregasRouter;
 }
