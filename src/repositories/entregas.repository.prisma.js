@@ -1,58 +1,60 @@
 import { prisma } from '../config/database.js';
 
-export class EntregasRepositoryPrisma{
+export class EntregasRepositoryPrisma {
         async listarEntregas() {
                 return await prisma.Entregas.findMany();
         }
 
-        async cadastrarEntrega(descricao, origem, destino){
-                const novaEntrega = await prisma.Entregas.create({ 
+        async cadastrarEntrega(descricao, origem, destino) {
+                const novaEntrega = await prisma.Entregas.create({
                         data: {
-                                descricao: descricao, 
-                                origem: origem, 
+                                descricao: descricao,
+                                origem: origem,
                                 destino: destino,
+                                status: 'CRIADA',
                                 motoristaId: null,
                                 historico: {
-                                        create:{
+                                        create: {
                                                 descricao: "Entrega Cadastrada",
                                         }
                                 }
-                        }
+                        },
+                        include: { historico: true }
                 })
                 return novaEntrega;
         }
-        async listarEntregasFiltrada(filtro){
+        async listarEntregasFiltrada(filtro) {
                 const entregasFiltrada = await prisma.Entregas.findMany({
-                        where: { status: filtro}
+                        where: { status: filtro }
                 })
                 return entregasFiltrada;
         }
 
-        async listarEntregaPorId(id){
-                const entregasFiltrada = await prisma.Entregas.findMany({
-                        where: { id: id}
+        async listarEntregaPorId(id) {
+                const entregasFiltrada = await prisma.Entregas.findUnique({
+                        where: { id: Number(id) }
                 })
                 return entregasFiltrada;
         }
 
-        async avancarEntrega(id){
-                const entrega = await prisma.Entregas.findMany({
-                        where: { id: id},
+        async avancarEntrega(id) {
+                const entrega = await prisma.Entregas.findUnique({
+                        where: { id: Number(id) },
                         include: { historico: true }
-                });  
+                });
 
                 if (!entrega) { return null; }
 
                 let novoStatus = null;
-                if (entrega.status === 'CRIADO'){ 
+                if (entrega.status === 'CRIADA') {
                         novoStatus = 'EM_TRANSITO';
-                } 
-                if (entrega.status === 'EM_TRANSITO'){
+                }
+                if (entrega.status === 'EM_TRANSITO') {
                         novoStatus = 'ENTREGUE';
                 }
 
                 const entregasAtualizada = await prisma.Entregas.update({
-                        where : {id: id},
+                        where: { id: Number(id) },
                         data: {
                                 status: novoStatus,
                                 historico: {
@@ -68,32 +70,45 @@ export class EntregasRepositoryPrisma{
                 return entregasAtualizada;
         }
 
-        async cancelarEntrega(id){
-                await prisma.Entregas.delete({
-                        where: {id : id},
-                })
-                return true
+        async cancelarEntrega(id) {
+                return await prisma.entregas.update({
+                        where: { id: Number(id) },
+                        data: {
+                                status: 'CANCELADA',
+                                historico: {
+                                        create: {
+                                                descricao: 'CANCELADA'
+                                        }
+                                }
+                        },
+                        include: { historico: true }
+                });
+                // await prisma.Entregas.delete({
+                //         where: { id: Number(id) },
+                // })
+                // return true
         }
 
-        async buscarEntregaHistorico(id){
+        async buscarEntregaHistorico(id) {
                 const entrega = await prisma.Entregas.findUnique({
-                        where: {id: id},
-                        include: {historico: true}
+                        where: { id: Number(id) },
+                        include: { historico: true }
                 });
                 return entrega.historico;
         }
 
-        async buscarEntregaMotorista(motoristaId){
-               return await prisma.Entregas.findUnique({
-                        where: {motoristaId: motoristaId},
+        async buscarEntregaMotorista(motoristaId) {
+                return await prisma.Entregas.findFirst({
+                        where: { motoristaId: Number(motoristaId) },
                 });
         }
-        async buscarEntregaMotoristaFiltrado(motoristaId, status){
-                return await prisma.Entregas.findUnique({
-                        where: {motoristaId: motoristaId,
+        async buscarEntregaMotoristaFiltrado(motoristaId, status) {
+                return await prisma.Entregas.findFirst({
+                        where: {
+                                motoristaId: Number(motoristaId),
                                 status: status
                         },
-                        include:{
+                        include: {
                                 historico: true
                         }
 
@@ -103,18 +118,18 @@ export class EntregasRepositoryPrisma{
                 return await prisma.entregas.update({
                         where: {
                                 id: Number(id)
-                                },
-                                data: {
+                        },
+                        data: {
                                 motoristaId: Number(motoristaId),
                                 historico: {
                                         create: {
-                                        descricao: `Motorista ${motoristaId} atribuído à entrega`
+                                                descricao: `Motorista ${motoristaId} atribuído à entrega`
                                         }
                                 }
                         },
                         include: {
-                        historico: true,
-                        // motorista: true 
+                                historico: true,
+                                // motorista: true 
                         }
                 });
         }
